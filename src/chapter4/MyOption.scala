@@ -1,46 +1,43 @@
 package chapter4
 
-// Hide scala Option
-import scala.{None => _, Some => _}
-
 trait MyOption[+A] {
 
   def map[B](f: A => B): MyOption[B] = this match {
-    case Some(value) => Some(f(value)) 
-    case None        => None
+    case MySome(value) => MySome(f(value)) 
+    case MyNone        => MyNone
   }   
     
   def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
-    case Some(value) => f(value)
-    case None        => None
+    case MySome(value) => f(value)
+    case MyNone        => MyNone
   }
   
-  def flatMap2[B](f: A => MyOption[B]): MyOption[B] = this.map(f).getOrElse(None)
+  def flatMap2[B](f: A => MyOption[B]): MyOption[B] = this.map(f).getOrElse(MyNone)
   
   def getOrElse[B >: A](default: => B): B = this match {
-    case Some(value) => value
-    case None        => default
+    case MySome(value) => value
+    case MyNone        => default
   }
   
   def orElse[B >: A](ob: => MyOption[B]): MyOption[B] = this match {
-    case Some(value) => this
-    case None        => ob
+    case MySome(value) => this
+    case MyNone        => ob
   }
   
-  def orElse2[B >: A](ob: => MyOption[B]): MyOption[B] = this map (Some(_)) getOrElse ob;  
+  def orElse2[B >: A](ob: => MyOption[B]): MyOption[B] = this map (MySome(_)) getOrElse ob;  
     
   def filter(f: A => Boolean): MyOption[A] = this match {
-    case Some(value) if (f(value)) => this
-    case _                         => None
+    case MySome(value) if (f(value)) => this
+    case _                         => MyNone
   }
   
-  def filter2(f: A => Boolean): MyOption[A] = this flatMap (x => if (f(x)) Some(x) else None)
+  def filter2(f: A => Boolean): MyOption[A] = this flatMap (x => if (f(x)) MySome(x) else MyNone)
  
 }
 
-case class Some[+A](get: A) extends MyOption[A]
-case object None extends MyOption[Nothing]
+case class MySome[+A](get: A) extends MyOption[A]
+case object MyNone extends MyOption[Nothing]
 
 object MyOption {
-  def apply[A](a: A) = if (a == null) None else Some(a)  
+  def apply[A](a: A) = if (a == null) MyNone else MySome(a)  
 }

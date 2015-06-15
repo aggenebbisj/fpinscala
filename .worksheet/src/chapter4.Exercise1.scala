@@ -19,5 +19,6 @@ object Exercise1 {;import org.scalaide.worksheet.runtime.library.WorksheetSuppor
   a filter (_ > 3);System.out.println("""res5: chapter4.MyOption[Int] = """ + $show(res$5));$skip(19); val res$6 = 
   a filter (_ < 3);System.out.println("""res6: chapter4.MyOption[Int] = """ + $show(res$6))}
   
+ 
   
 }
